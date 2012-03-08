@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2BFD15
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGD.NHibernateHelper.Tests", "..\OGD.NHibernateHelper.Tests\OGD.NHibernateHelper.Tests.csproj", "{6C19D414-26F3-4791-8D5D-87470DC32FEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{F121A9F7-41CD-4F50-B8E4-153DB45E1DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F121A9F7-41CD-4F50-B8E4-153DB45E1DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F121A9F7-41CD-4F50-B8E4-153DB45E1DA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C19D414-26F3-4791-8D5D-87470DC32FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C19D414-26F3-4791-8D5D-87470DC32FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C19D414-26F3-4791-8D5D-87470DC32FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C19D414-26F3-4791-8D5D-87470DC32FEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
