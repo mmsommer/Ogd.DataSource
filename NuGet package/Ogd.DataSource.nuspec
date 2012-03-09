@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>Ogd.DataSource</id>
+        <version>1.0.0.0</version>
+        <title>OGD NHibernate DataSource</title>
+        <authors>Michael Sommer</authors>
+        <owners>OGD ict-diensten</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This package provides a standard NHibernate helper to connect to a database with NHibernate 3.2.x. And provides a Generic Dao to use for dataretrieval with help of the NHibernate helper.</description>
+        <releaseNotes>First release</releaseNotes>
+        <copyright>Copyright 2012</copyright>
+        <tags>OGD NHibernate Data NHibernateHelper GenericDao</tags>
+    </metadata>
+</package>

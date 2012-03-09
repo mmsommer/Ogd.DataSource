@@ -1,18 +1,17 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("OGD.NHibernateHelper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("OGD.DataSource")]
+[assembly: AssemblyDescription("This package provides a standard NHibernate helper to connect to a database with NHibernate 3.2.x. And provides a Generic Dao to use for dataretrieval with help of the NHibernate helper.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("OGD")]
-[assembly: AssemblyProduct("OGD.NHibernateHelper")]
+[assembly: AssemblyCompany("OGD ict-diensten")]
+[assembly: AssemblyProduct("OGD.DataSource")]
 [assembly: AssemblyCopyright("Copyright © OGD 2012")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCulture("NL-nl")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

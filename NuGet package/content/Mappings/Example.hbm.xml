@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+    <class name="Ogd.Domain.Example, Ogd.Domain"
+           table="Examples">
+        <id name="Id">
+            <column name="Id"
+                    sql-type="int"
+                    not-null="true" />
+            <generator class="identity" />
+        </id>
+        <property name="Name"
+                  not-null="true"/>
+    </class>
+</hibernate-mapping>

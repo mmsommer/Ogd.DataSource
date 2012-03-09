@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -12,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("OGD.NHibernateHelper.Tests")]
 [assembly: AssemblyCopyright("Copyright © OGD 2012")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCulture("NL-nl")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
