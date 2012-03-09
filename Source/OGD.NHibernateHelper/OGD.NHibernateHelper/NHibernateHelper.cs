@@ -3,7 +3,7 @@ using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Context;
 
-namespace OGD
+namespace Ogd.DataSource
 {
     public class NHibernateHelper
     {
