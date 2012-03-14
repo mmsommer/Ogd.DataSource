@@ -1,144 +1,72 @@
-﻿using System.Collections.Generic;
-using Moq;
+﻿using Moq;
 using NHibernate;
 using NUnit.Framework;
 
 namespace Ogd.DataSource.Tests
 {
     [TestFixture]
-    public class GenericDaoFixture
+    public class GenericDaoFixture : IDaoTests<IIdentifiable>
     {
         [Test]
-        public void TestSave_ReturnsNHibernateResult()
+        public void Test_Save_EntityGiven_VerifySessionSaveIsCalled()
         {
-            var mockCountry = new Mock<IIdentifiable>();
-            mockCountry.SetupProperty(t => t.Id);
-
-            var country = mockCountry.Object;
-
-            country.Id = 0;
-
+            var stubObject = new Mock<IIdentifiable>();
             var mockSession = new Mock<ISession>();
-            mockSession.Setup(s => s.Save(mockCountry.Object)).Returns(1);
+            mockSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => 1);
+            var stubSessionFactory = new Mock<ISessionFactory>();
+            stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
 
-            var mockSessionFactory = new Mock<ISessionFactory>();
-            mockSessionFactory.Setup(f => f.GetCurrentSession()).Returns(mockSession.Object);
-
-            var dao = new GenericDao<IIdentifiable>(mockSessionFactory.Object);
-
-            country = dao.Save(country);
-
-            Assert.That(country.Id, Is.EqualTo(1));
+            var sut = CreateIDaoImplementation(stubSessionFactory.Object);
+            sut.Save(stubObject.Object);
+            mockSession.Verify(x => x.Save(It.IsAny<IIdentifiable>()));
         }
 
         [Test]
-        public void TestUpdate_ReturnsTrue()
+        public void Test_Save_EntityGiven_VerifyEntitySetIdIsCalled()
         {
-            var mockTransaction = new Mock<ITransaction>();
-            mockTransaction.Setup(t => t.Commit());
+            var mockObject = new Mock<IIdentifiable>();
+            mockObject.SetupProperty(x => x.Id, 0);
+            var stubSession = new Mock<ISession>();
+            stubSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => 1);
+            var stubSessionFactory = new Mock<ISessionFactory>();
+            stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => stubSession.Object);
 
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(s => s.BeginTransaction()).Returns(mockTransaction.Object);
-            mockSession.Setup(s => s.Update(It.IsAny<object>()));
-
-            var mockSessionFactory = new Mock<ISessionFactory>();
-            mockSessionFactory.Setup(f => f.GetCurrentSession()).Returns(mockSession.Object);
-
-            var dao = new GenericDao<IIdentifiable>(mockSessionFactory.Object);
-
-            var result = dao.Update(new Mock<IIdentifiable>().Object);
-
-            Assert.That(result, Is.True);
-
-            mockSession.Verify(s => s.Update(It.IsAny<object>()), Times.Once());
+            var sut = CreateIDaoImplementation(stubSessionFactory.Object);
+            sut.Save(mockObject.Object);
+            mockObject.VerifySet(x => x.Id = It.IsAny<int>());
         }
 
         [Test]
-        public void TestDelete_ReturnsTrue()
+        public void Test_Save_EntityGiven_NewIdIsSet()
         {
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(s => s.Delete(It.IsAny<object>()));
+            var oldId = 0;
+            var newId = 1;
+            var mockObject = new Mock<IIdentifiable>();
+            mockObject.SetupProperty(x => x.Id, oldId);
+            var stubSession = new Mock<ISession>();
+            stubSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => newId);
+            var stubSessionFactory = new Mock<ISessionFactory>();
+            stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => stubSession.Object);
 
-            var mockSessionFactory = new Mock<ISessionFactory>();
-            mockSessionFactory.Setup(f => f.GetCurrentSession()).Returns(mockSession.Object);
+            var sut = CreateIDaoImplementation(stubSessionFactory.Object);
+            sut.Save(mockObject.Object);
 
-            var dao = new GenericDao<IIdentifiable>(mockSessionFactory.Object);
-
-            var result = dao.Delete(new Mock<IIdentifiable>().Object);
-
-            Assert.That(result, Is.True);
-
-            mockSession.Verify(s => s.Delete(It.IsAny<object>()), Times.Once());
+            Assert.That(mockObject.Object.Id, Is.EqualTo(newId));
         }
 
-        [Test]
-        public void TestSaveOrUpdateAll_ReturnsTrue()
+        protected override IDao<IIdentifiable> CreateIDaoImplementation()
         {
-            var mockIntervention1 = new Mock<IIdentifiable>();
-            mockIntervention1.SetupProperty(t => t.Id);
-            mockIntervention1.Object.Id = 0;
+            var daoStub = new GenericDao<IIdentifiable>(initialCollection: Collection);
 
-            var mockTempObject2 = new Mock<IIdentifiable>();
-            mockTempObject2.SetupProperty(t => t.Id);
-            mockTempObject2.Object.Id = 0;
-
-            var mockTempObject3 = new Mock<IIdentifiable>();
-            mockTempObject3.SetupProperty(t => t.Id);
-            mockTempObject3.Object.Id = 1;
-
-            var mockTempObject4 = new Mock<IIdentifiable>();
-            mockTempObject4.SetupProperty(t => t.Id);
-            mockTempObject4.Object.Id = 2;
-
-            var mockTheses = new List<IIdentifiable>();
-            mockTheses.Add(mockIntervention1.Object);
-            mockTheses.Add(mockTempObject2.Object);
-            mockTheses.Add(mockTempObject3.Object);
-            mockTheses.Add(mockTempObject4.Object);
-
-            var mockTransaction = new Mock<ITransaction>();
-            mockTransaction.Setup(t => t.Commit());
-
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(s => s.BeginTransaction()).Returns(mockTransaction.Object);
-            mockSession.Setup(s => s.Save(It.IsAny<object>())).Returns(1);
-            mockSession.Setup(s => s.Update(It.IsAny<object>()));
-
-            var mockSessionFactory = new Mock<ISessionFactory>();
-            mockSessionFactory.Setup(f => f.GetCurrentSession()).Returns(mockSession.Object);
-
-            var dao = new GenericDao<IIdentifiable>(mockSessionFactory.Object);
-
-            var result = dao.SaveOrUpdateAll(mockTheses);
-
-            Assert.That(result, Is.True);
-
-            mockSession.Verify(s => s.Save(It.IsAny<object>()), Times.Exactly(2));
-            mockSession.Verify(s => s.Update(It.IsAny<object>()), Times.Exactly(2));
+            return daoStub;
         }
 
-        [Test]
-        public void TestDeleteAll_ReturnsTrue()
+        protected override IDao<IIdentifiable> CreateIDaoImplementation(ISessionFactory sessionFactory)
         {
-            var mockTheses = new List<IIdentifiable>();
-            mockTheses.Add(new Mock<IIdentifiable>().Object);
-            mockTheses.Add(new Mock<IIdentifiable>().Object);
-            mockTheses.Add(new Mock<IIdentifiable>().Object);
-            mockTheses.Add(new Mock<IIdentifiable>().Object);
+            var daoStub = new GenericDao<IIdentifiable>(sessionFactory: sessionFactory);
 
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(s => s.Delete(It.IsAny<object>()));
-
-            var mockSessionFactory = new Mock<ISessionFactory>();
-            mockSessionFactory.Setup(f => f.GetCurrentSession()).Returns(mockSession.Object);
-
-            var dao = new GenericDao<IIdentifiable>(mockSessionFactory.Object);
-
-            var result = dao.DeleteAll(mockTheses);
-
-            Assert.That(result, Is.True);
-
-            mockSession.Verify(s => s.Delete(It.IsAny<object>()), Times.Exactly(4));
+            return daoStub;
         }
+
     }
 }

@@ -2,6 +2,9 @@
 using System.Linq;
 using NHibernate;
 using NHibernate.Linq;
+using System.Runtime.CompilerServices;
+using System;
+[assembly: InternalsVisibleTo("Ogd.DataSource.Tests")]
 
 namespace Ogd.DataSource
 {
@@ -17,18 +20,26 @@ namespace Ogd.DataSource
             get { return _sessionFactory ?? NHibernateHelper.Instance; }
         }
 
-        public GenericDao() { }
+        private IQueryable<T> _collection = null;
 
-        public GenericDao(ISessionFactory sessionFactory)
+        private IQueryable<T> Collection
         {
-            _sessionFactory = sessionFactory ?? NHibernateHelper.Instance;
+            // Collection has to be injected for test, but cannot be configured by constructor.
+            // In this way the injected collection is returned or the static instance property.
+            get { return _collection ?? SessionFactory.GetCurrentSession().Query<T>(); }
+        }
+
+        public GenericDao() : this(null, null) { }
+
+        internal GenericDao(IQueryable<T> initialCollection = null, ISessionFactory sessionFactory = null)
+        {
+            _collection = initialCollection;
+            _sessionFactory = sessionFactory;
         }
 
         public virtual IQueryable<T> GetAll()
         {
-            var session = SessionFactory.GetCurrentSession();
-
-            return session.Query<T>();
+            return Collection;
         }
 
         public virtual T GetById(int id)
@@ -38,6 +49,10 @@ namespace Ogd.DataSource
 
         public virtual T Save(T entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
             var session = SessionFactory.GetCurrentSession();
 
             entity.Id = (int)session.Save(entity);
@@ -47,6 +62,10 @@ namespace Ogd.DataSource
 
         public virtual bool Update(T entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
             var session = SessionFactory.GetCurrentSession();
 
             session.Update(entity);
@@ -56,6 +75,10 @@ namespace Ogd.DataSource
 
         public virtual bool Delete(T entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
             var session = SessionFactory.GetCurrentSession();
 
             session.Delete(entity);
@@ -65,6 +88,10 @@ namespace Ogd.DataSource
 
         public virtual bool SaveOrUpdateAll(IEnumerable<T> entities)
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
             var returnValue = true;
 
             foreach (var entity in entities)
@@ -84,6 +111,10 @@ namespace Ogd.DataSource
 
         public virtual bool DeleteAll(IEnumerable<T> entities)
         {
+            if (entities == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
             var returnValue = true;
 
             foreach (var entity in entities)

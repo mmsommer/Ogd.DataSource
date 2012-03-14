@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GenericDaoFixture.cs" />
+    <Compile Include="IDaoTests.cs" />
     <Compile Include="NHibernateHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -62,8 +63,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OGD.DataSource\Ogd.DataSource.csproj">
-      <Project>{1224DFF7-130C-450D-AB0D-440AD5C2F574}</Project>
+    <ProjectReference Include="..\Ogd.DataSource\Ogd.DataSource.csproj">
+      <Project>{693f5d16-e045-4c4a-92ac-e842cbb7d41c}</Project>
       <Name>Ogd.DataSource</Name>
     </ProjectReference>
   </ItemGroup>
