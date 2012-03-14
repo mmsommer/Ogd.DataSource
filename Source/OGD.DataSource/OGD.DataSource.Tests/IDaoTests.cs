@@ -234,14 +234,4 @@ namespace Ogd.DataSource.Tests
             Assert.That(sut.DeleteAll(new T[] { stubObject.Object }), Is.True);
         }
     }
-
-    public static class SessionExtensions
-    {
-        internal static Func<ISession, IQueryable<IIdentifiable>> QueryAll = (session) => IDaoTests<IIdentifiable>.Collection.AsQueryable();
-
-        public static IQueryable<IIdentifiable> Query(this ISession session)
-        {
-            return QueryAll(session);
-        }
-    }
 }

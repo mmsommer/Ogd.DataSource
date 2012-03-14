@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using NHibernate;
 using NHibernate.Linq;
-using System.Runtime.CompilerServices;
-using System;
-[assembly: InternalsVisibleTo("Ogd.DataSource.Tests")]
 
+[assembly: InternalsVisibleTo("Ogd.DataSource.Tests")]
 namespace Ogd.DataSource
 {
     public class GenericDao<T> : IDao<T>

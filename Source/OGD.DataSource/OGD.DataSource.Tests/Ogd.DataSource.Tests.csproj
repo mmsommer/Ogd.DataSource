@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="GenericDaoTests.cs" />
     <Compile Include="IDaoTests.cs" />
-    <Compile Include="NHibernateHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
