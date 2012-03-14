@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Ogd.DataSource.Tests
 {
     [TestFixture]
-    public class GenericDaoFixture : IDaoTests<IIdentifiable>
+    public class GenericDaoTests : IDaoTests<IIdentifiable>
     {
         [Test]
         public void Test_Save_EntityGiven_VerifySessionSaveIsCalled()

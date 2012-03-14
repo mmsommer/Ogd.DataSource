@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GenericDaoFixture.cs" />
+    <Compile Include="GenericDaoTests.cs" />
     <Compile Include="IDaoTests.cs" />
     <Compile Include="NHibernateHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
