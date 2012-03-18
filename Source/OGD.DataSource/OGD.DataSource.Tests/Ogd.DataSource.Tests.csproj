@@ -54,6 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DaoFactoryTest.cs" />
+    <Compile Include="IDaoFactoryTest.cs" />
+    <Compile Include="GenericDaoFactoryTest.cs" />
     <Compile Include="GenericDaoTests.cs" />
     <Compile Include="IDaoTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

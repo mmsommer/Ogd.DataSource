@@ -29,7 +29,7 @@ namespace Ogd.DataSource
             get { return _collection ?? SessionFactory.GetCurrentSession().Query<T>(); }
         }
 
-        public GenericDao() : this(null, null) { }
+        internal GenericDao() : this(null, null) { }
 
         internal GenericDao(IQueryable<T> initialCollection = null, ISessionFactory sessionFactory = null)
         {

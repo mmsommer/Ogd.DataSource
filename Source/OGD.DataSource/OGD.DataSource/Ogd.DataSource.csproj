@@ -48,8 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DaoFactory.cs" />
     <Compile Include="GenericDao.cs" />
+    <Compile Include="GenericDaoFactory.cs" />
     <Compile Include="IDao.cs" />
+    <Compile Include="IDaoFactory.cs" />
     <Compile Include="IIdentifiable.cs" />
     <Compile Include="NHibernateHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
