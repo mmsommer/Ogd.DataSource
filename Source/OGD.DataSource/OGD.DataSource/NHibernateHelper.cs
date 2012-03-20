@@ -5,16 +5,17 @@ using NHibernate.Context;
 
 namespace Ogd.DataSource
 {
-    public class NHibernateHelper
+    public class NHibernateHelper : INHibernateHelper
     {
         private static volatile ISessionFactory _instance;
 
-        private static object syncRoot = new Object();
+        private static object _syncRoot = new Object();
 
         private static bool _configured = false;
+
         private static Configuration _configuration;
 
-        public static Configuration Configuration
+        public Configuration Configuration
         {
             get
             {
@@ -30,7 +31,7 @@ namespace Ogd.DataSource
             }
         }
 
-        public static ISessionFactory Instance
+        public ISessionFactory SessionFactory
         {
             get
             {
@@ -38,7 +39,7 @@ namespace Ogd.DataSource
                 {
                     // The instance of a SessionFactory can only be accessed when the instance variable completes.
                     // The syncRoot instance is locked to avoid deadlocks.
-                    lock (syncRoot)
+                    lock (_syncRoot)
                     {
                         if (_instance == null)
                         {
@@ -50,7 +51,14 @@ namespace Ogd.DataSource
             }
         }
 
-        public static bool SessionIsBound
+        public NHibernateHelper() : this(null) { }
+
+        public NHibernateHelper(Configuration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public bool SessionIsBound
         {
             get
             {
@@ -58,33 +66,36 @@ namespace Ogd.DataSource
                 {
                     return false;
                 }
-                return CurrentSessionContext.HasBind(Instance);
+                return CurrentSessionContext.HasBind(SessionFactory);
             }
         }
 
-        public static ISession GetCurrentSession()
+        public ISession CurrentSession
         {
-            Bind();
+            get
+            {
+                Bind();
 
-            return Instance.GetCurrentSession();
+                return SessionFactory.GetCurrentSession();
+            }
         }
 
-        public static void Bind()
+        public void Bind()
         {
             if (!SessionIsBound)
             {
-                var session = Instance.OpenSession();
+                var session = SessionFactory.OpenSession();
                 session.BeginTransaction();
                 CurrentSessionContext.Bind(session);
             }
         }
 
-        public static void RollBack(ISession session = null)
+        public void RollBack(ISession session = null)
         {
-            var currentSession = session ?? GetCurrentSession();
-            if (NHibernateHelper.SessionIsBound)
+            var currentSession = session ?? CurrentSession;
+            if (SessionIsBound)
             {
-                CurrentSessionContext.Unbind(NHibernateHelper.Instance);
+                CurrentSessionContext.Unbind(SessionFactory);
                 if (currentSession.IsOpen)
                 {
                     Rollback(currentSession.Transaction);
@@ -94,12 +105,12 @@ namespace Ogd.DataSource
             }
         }
 
-        public static void Flush(ISession session = null)
+        public void Flush(ISession session = null)
         {
-            var currentSession = session ?? GetCurrentSession();
-            if (NHibernateHelper.SessionIsBound)
+            var currentSession = session ?? CurrentSession;
+            if (SessionIsBound)
             {
-                CurrentSessionContext.Unbind(NHibernateHelper.Instance);
+                CurrentSessionContext.Unbind(SessionFactory);
                 if (currentSession.IsOpen)
                 {
                     Commit(currentSession.Transaction);
@@ -109,7 +120,7 @@ namespace Ogd.DataSource
             }
         }
 
-        private static void Commit(ITransaction transaction)
+        private void Commit(ITransaction transaction)
         {
             if (transaction != null && transaction.IsActive)
             {
@@ -117,7 +128,7 @@ namespace Ogd.DataSource
             }
         }
 
-        private static void Rollback(ITransaction transaction)
+        private void Rollback(ITransaction transaction)
         {
             if (transaction != null && transaction.IsActive)
             {
@@ -125,14 +136,14 @@ namespace Ogd.DataSource
             }
         }
 
-        private static ISessionFactory BuildFactory()
+        private ISessionFactory BuildFactory()
         {
             Configure();
 
             return Configuration.BuildSessionFactory();
         }
 
-        public static Configuration Configure(Configuration configuration = null)
+        public Configuration Configure(Configuration configuration = null)
         {
             if (configuration != null)
             {

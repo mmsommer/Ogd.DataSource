@@ -1,18 +1,37 @@
 ﻿using Moq;
+using NHibernate;
+using NHibernate.Cfg;
 using NUnit.Framework;
 
 namespace Ogd.DataSource.Tests
 {
     public class DaoFactoryTest : IDaoFactoryTest
     {
+        private INHibernateHelper NHibernateHelper { get; set; }
+
+        [SetUp]
+        public void Init()
+        {
+            var stubConfiguration = new Mock<Configuration>();
+            var stubSessionFactory = new Mock<ISessionFactory>();
+            var stubNHibernateHelper = new Mock<INHibernateHelper>();
+            stubNHibernateHelper
+                .Setup(x => x.Configure(null))
+                .Returns(() => stubConfiguration.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
+            NHibernateHelper = stubNHibernateHelper.Object;
+        }
+
         internal override IDaoFactory CreateDaoFactoryImplementation()
         {
-            return new DaoFactory();
+            return new DaoFactory(null, null, NHibernateHelper);
         }
 
         internal IDaoFactory CreateDaoFactoryImplementation(IDaoFactory daoFactory)
         {
-            return new DaoFactory(daoFactory);
+            return new DaoFactory(daoFactory, null, NHibernateHelper);
         }
 
         [Test]
@@ -20,7 +39,7 @@ namespace Ogd.DataSource.Tests
         {
             var factory = new Mock<IDaoFactory>().Object;
 
-            var sut = new DaoFactory(factory);
+            var sut = new DaoFactory(factory, null, NHibernateHelper);
 
             Assert.That(sut.Factory, Is.SameAs(factory));
         }
@@ -31,7 +50,7 @@ namespace Ogd.DataSource.Tests
             var factoryMock = new Mock<IDaoFactory>();
             var factory = factoryMock.Object;
 
-            var sut = new DaoFactory(factory);
+            var sut = new DaoFactory(factory, null, NHibernateHelper);
 
             sut.CreateDao<IIdentifiable>();
 

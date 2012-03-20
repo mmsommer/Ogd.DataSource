@@ -54,6 +54,7 @@
     <Compile Include="IDao.cs" />
     <Compile Include="IDaoFactory.cs" />
     <Compile Include="IIdentifiable.cs" />
+    <Compile Include="INHibernateHelper.cs" />
     <Compile Include="NHibernateHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

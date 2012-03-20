@@ -11,30 +11,34 @@ namespace Ogd.DataSource
     public class GenericDao<T> : IDao<T>
         where T : class, IIdentifiable
     {
-        private ISessionFactory _sessionFactory = null;
-
         private ISessionFactory SessionFactory
         {
-            // SessionFactory has to be injected for test, but cannot be configured by constructor.
-            // In this way the injected factory is returned or the static instance property.
-            get { return _sessionFactory ?? NHibernateHelper.Instance; }
+            get
+            {
+                if (NHibernateHelper != null)
+                {
+                    return NHibernateHelper.SessionFactory;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
-        private IQueryable<T> _collection = null;
+        private INHibernateHelper NHibernateHelper { get; set; }
 
-        private IQueryable<T> Collection
-        {
-            // Collection has to be injected for test, but cannot be configured by constructor.
-            // In this way the injected collection is returned or the static instance property.
-            get { return _collection ?? SessionFactory.GetCurrentSession().Query<T>(); }
-        }
+        private IQueryable<T> Collection { get; set; }
 
         internal GenericDao() : this(null, null) { }
 
-        internal GenericDao(IQueryable<T> initialCollection = null, ISessionFactory sessionFactory = null)
+        internal GenericDao(
+            IQueryable<T> initialCollection,
+            INHibernateHelper nHibernateHelper
+        )
         {
-            _collection = initialCollection;
-            _sessionFactory = sessionFactory;
+            NHibernateHelper = nHibernateHelper ?? new NHibernateHelper();
+            Collection = initialCollection ?? SessionFactory.GetCurrentSession().Query<T>();
         }
 
         public virtual IQueryable<T> GetAll()

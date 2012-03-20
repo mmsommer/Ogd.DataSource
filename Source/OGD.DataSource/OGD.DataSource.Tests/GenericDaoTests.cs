@@ -3,12 +3,36 @@ using System.Linq;
 using Moq;
 using NHibernate;
 using NUnit.Framework;
+using NHibernate.Cfg;
 
 namespace Ogd.DataSource.Tests
 {
     [TestFixture]
     public class GenericDaoTests : IDaoTests<IIdentifiable>
     {
+        private Mock<INHibernateHelper> stubNHibernateHelper { get; set; }
+
+        private INHibernateHelper NHibernateHelper { get; set; }
+
+        [SetUp]
+        public void Init()
+        {
+            var stubConfiguration = new Mock<Configuration>();
+            var stubSession = new Mock<ISession>();
+            var stubSessionFactory = new Mock<ISessionFactory>();
+            stubSessionFactory
+                .Setup(x => x.GetCurrentSession())
+                .Returns(() => stubSession.Object);
+            stubNHibernateHelper = new Mock<INHibernateHelper>();
+            stubNHibernateHelper
+                .Setup(x => x.Configure(null))
+                .Returns(() => stubConfiguration.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
+            NHibernateHelper = stubNHibernateHelper.Object;
+        }
+
         [Test]
         public void Test_GetAll_CollectionSet_ReturnsCollection()
         {
@@ -18,7 +42,7 @@ namespace Ogd.DataSource.Tests
                 { new Mock<IIdentifiable>().Object }
             }.AsQueryable();
 
-            var sut = new GenericDao<IIdentifiable>(initialCollection: Collection);
+            var sut = new GenericDao<IIdentifiable>(Collection, NHibernateHelper);
 
             Assert.That(sut.GetAll(), Is.EquivalentTo(Collection));
         }
@@ -33,9 +57,14 @@ namespace Ogd.DataSource.Tests
             }.AsQueryable();
             var mockSession = new Mock<ISession>();
             var stubSessionFactory = new Mock<ISessionFactory>();
-            stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubSessionFactory
+                .Setup(x => x.GetCurrentSession())
+                .Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(initialCollection: Collection, sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(Collection, NHibernateHelper);
 
             Assert.That(sut.GetAll(), Is.EquivalentTo(Collection));
         }
@@ -58,8 +87,11 @@ namespace Ogd.DataSource.Tests
             var mockSession = new Mock<ISession>();
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(initialCollection: Collection, sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(Collection, NHibernateHelper);
 
             Assert.That(sut.GetById(id), Is.SameAs(stubObject.Object));
         }
@@ -82,8 +114,11 @@ namespace Ogd.DataSource.Tests
             var mockSession = new Mock<ISession>();
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(initialCollection: Collection, sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(Collection, NHibernateHelper);
 
             Assert.That(sut.GetById(id), Is.Null);
         }
@@ -96,8 +131,11 @@ namespace Ogd.DataSource.Tests
             mockSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => 1);
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.Save(stubObject.Object);
             mockSession.Verify(x => x.Save(It.IsAny<IIdentifiable>()));
         }
@@ -111,8 +149,11 @@ namespace Ogd.DataSource.Tests
             stubSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => 1);
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => stubSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.Save(mockObject.Object);
             mockObject.VerifySet(x => x.Id = It.IsAny<int>());
         }
@@ -128,8 +169,11 @@ namespace Ogd.DataSource.Tests
             stubSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => newId);
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => stubSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.Save(mockObject.Object);
 
             Assert.That(mockObject.Object.Id, Is.EqualTo(newId));
@@ -143,8 +187,11 @@ namespace Ogd.DataSource.Tests
             mockSession.Setup(x => x.Update(It.IsAny<IIdentifiable>()));
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.Update(stubObject.Object);
             mockSession.Verify(x => x.Update(It.IsAny<IIdentifiable>()));
         }
@@ -157,8 +204,11 @@ namespace Ogd.DataSource.Tests
             mockSession.Setup(x => x.Delete(It.IsAny<IIdentifiable>()));
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.Delete(stubObject.Object);
             mockSession.Verify(x => x.Delete(It.IsAny<IIdentifiable>()));
         }
@@ -171,8 +221,11 @@ namespace Ogd.DataSource.Tests
             mockSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => 1);
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.SaveOrUpdateAll(new IIdentifiable[] { stubObject.Object });
             mockSession.Verify(x => x.Save(It.IsAny<IIdentifiable>()));
         }
@@ -186,8 +239,11 @@ namespace Ogd.DataSource.Tests
             mockSession.Setup(x => x.Update(It.IsAny<IIdentifiable>()));
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.SaveOrUpdateAll(new IIdentifiable[] { stubObject.Object });
             mockSession.Verify(x => x.Update(It.IsAny<IIdentifiable>()));
         }
@@ -200,22 +256,28 @@ namespace Ogd.DataSource.Tests
             mockSession.Setup(x => x.Save(It.IsAny<IIdentifiable>())).Returns(() => 1);
             var stubSessionFactory = new Mock<ISessionFactory>();
             stubSessionFactory.Setup(x => x.GetCurrentSession()).Returns(() => mockSession.Object);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => stubSessionFactory.Object);
 
-            var sut = new GenericDao<IIdentifiable>(sessionFactory: stubSessionFactory.Object);
+            var sut = new GenericDao<IIdentifiable>(null, NHibernateHelper);
             sut.DeleteAll(new IIdentifiable[] { stubObject.Object });
             mockSession.Verify(x => x.Delete(It.IsAny<IIdentifiable>()));
         }
 
         protected override IDao<IIdentifiable> CreateIDaoImplementation()
         {
-            var daoStub = new GenericDao<IIdentifiable>(initialCollection: Collection);
+            var daoStub = new GenericDao<IIdentifiable>(Collection, NHibernateHelper);
 
             return daoStub;
         }
 
         protected override IDao<IIdentifiable> CreateIDaoImplementation(ISessionFactory sessionFactory)
         {
-            var daoStub = new GenericDao<IIdentifiable>(sessionFactory: sessionFactory);
+            stubNHibernateHelper
+                .Setup(x => x.SessionFactory)
+                .Returns(() => sessionFactory);
+            var daoStub = new GenericDao<IIdentifiable>(null, NHibernateHelper);
 
             return daoStub;
         }
