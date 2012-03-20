@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NHibernate;
-using NUnit.Framework;
 using NHibernate.Cfg;
+using NUnit.Framework;
 
 namespace Ogd.DataSource.Tests
 {
@@ -281,6 +282,16 @@ namespace Ogd.DataSource.Tests
 
             return daoStub;
         }
-
     }
+
+    //public static class SessionExtensions
+    //{
+    //    internal static Func<ISession, IQueryable<T>> QueryAll = (session) => IDaoTests<T>.Collection.AsQueryable();
+
+    //    public static IQueryable<T> Query<T>(this ISession session)
+    //        where T : IIdentifiable
+    //    {
+    //        return QueryAll(session);
+    //    }
+    //}
 }

@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Context;
 
+[assembly: InternalsVisibleTo("Ogd.DataSource.Tests")]
 namespace Ogd.DataSource
 {
     public class NHibernateHelper : INHibernateHelper
     {
-        private static volatile ISessionFactory _instance;
+        internal static volatile ISessionFactory _instance;
 
         private static object _syncRoot = new Object();
 
-        private static bool _configured = false;
+        internal static bool _configured = false;
 
-        private static Configuration _configuration;
+        internal static Configuration _configuration;
 
         public Configuration Configuration
         {
@@ -49,13 +51,6 @@ namespace Ogd.DataSource
                 }
                 return _instance;
             }
-        }
-
-        public NHibernateHelper() : this(null) { }
-
-        public NHibernateHelper(Configuration configuration)
-        {
-            Configuration = configuration;
         }
 
         public bool SessionIsBound

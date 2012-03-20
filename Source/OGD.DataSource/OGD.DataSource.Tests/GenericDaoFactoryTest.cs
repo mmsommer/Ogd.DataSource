@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using NHibernate.Linq;
+using Moq;
 using NHibernate;
 using NUnit.Framework;
 

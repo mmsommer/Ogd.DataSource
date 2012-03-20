@@ -13,7 +13,10 @@ namespace Ogd.DataSource.Tests
         public void Init()
         {
             var stubConfiguration = new Mock<Configuration>();
+            var stubSession = new Mock<ISession>();
             var stubSessionFactory = new Mock<ISessionFactory>();
+            stubSessionFactory.Setup(x => x.GetCurrentSession())
+                .Returns(() => stubSession.Object);
             var stubNHibernateHelper = new Mock<INHibernateHelper>();
             stubNHibernateHelper
                 .Setup(x => x.Configure(null))

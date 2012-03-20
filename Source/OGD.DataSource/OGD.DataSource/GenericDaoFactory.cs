@@ -11,8 +11,6 @@ namespace Ogd.DataSource
 
         private INHibernateHelper NHibernateHelper { get; set; }
 
-        private ISessionFactory SessionFactory { get; set; }
-
         public GenericDaoFactory() : this(null, null) { }
 
         public GenericDaoFactory(
