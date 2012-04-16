@@ -12,7 +12,7 @@ namespace Ogd.DataSource.Tests
         {
             var sut = CreateDaoFactoryImplementation();
 
-            sut.CreateDao<IIdentifiable>();
+            Assert.DoesNotThrow(() => sut.CreateDao<IIdentifiable>());
         }
 
         [Test]
