@@ -12,7 +12,7 @@ namespace Ogd.DataSource.Tests
         {
             var sut = CreateDaoFactoryImplementation();
 
-            Assert.DoesNotThrow(() => sut.CreateDao<IIdentifiable>());
+            Assert.DoesNotThrow(() => sut.GetDao<IIdentifiable>());
         }
 
         [Test]
@@ -20,7 +20,7 @@ namespace Ogd.DataSource.Tests
         {
             var sut = CreateDaoFactoryImplementation();
 
-            Assert.That(sut.CreateDao<IIdentifiable>(), Is.InstanceOf<IDao<IIdentifiable>>());
+            Assert.That(sut.GetDao<IIdentifiable>(), Is.InstanceOf<IDao<IIdentifiable>>());
         }
     }
 }

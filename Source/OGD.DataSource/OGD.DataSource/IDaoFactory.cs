@@ -2,7 +2,7 @@
 {
     public interface IDaoFactory
     {
-        IDao<T> CreateDao<T>()
+        IDao<T> GetDao<T>()
             where T : class, IIdentifiable;
     }
 }

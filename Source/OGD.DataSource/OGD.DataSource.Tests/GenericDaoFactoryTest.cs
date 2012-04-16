@@ -34,7 +34,7 @@ namespace Ogd.DataSource.Tests
         {
             var sut = CreateDaoFactoryImplementation();
 
-            Assert.That(sut.CreateDao<IIdentifiable>(), Is.InstanceOf<GenericDao<IIdentifiable>>());
+            Assert.That(sut.GetDao<IIdentifiable>(), Is.InstanceOf<GenericDao<IIdentifiable>>());
         }
     }
 }

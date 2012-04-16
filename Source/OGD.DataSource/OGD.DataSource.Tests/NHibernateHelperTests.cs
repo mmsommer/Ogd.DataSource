@@ -13,6 +13,14 @@ namespace Ogd.DataSource.Tests
         }
 
         [Test]
+        public void Test_SessionIsBound_SessionFactoryNotSet_ReturnsFalse()
+        {
+            var sut = CreateINHibernateImplementation();
+
+            Assert.That(sut.SessionIsBound, Is.False);
+        }
+
+        [Test]
         public void Test_Configuration_ConfigurationSet_SetConfigurationReturned()
         {
             var configuration = new Configuration();
@@ -65,23 +73,6 @@ namespace Ogd.DataSource.Tests
             var sessionFactory = sut.SessionFactory;
 
             Assert.That(NHibernateHelper._instance, Is.InstanceOf<ISessionFactory>());
-        }
-
-        [Test]
-        public void Test_SessionFactory_StaticSessionFactoryNotSet_StaticSessionFactorySameAsReturned()
-        {
-            var sut = CreateINHibernateImplementation();
-            var sessionFactory = sut.SessionFactory;
-
-            Assert.That(NHibernateHelper._instance, Is.SameAs(sessionFactory));
-        }
-
-        [Test]
-        public void Test_SessionIsBound_SessionFactoryNotSet_ReturnsFalse()
-        {
-            var sut = CreateINHibernateImplementation();
-
-            Assert.That(sut.SessionIsBound, Is.False);
         }
 
     }

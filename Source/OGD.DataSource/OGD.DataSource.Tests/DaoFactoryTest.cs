@@ -48,16 +48,29 @@ namespace Ogd.DataSource.Tests
         }
 
         [Test]
-        public void Test_CreateDao_FactorySupplied_VerifySuppliedFactoryCreateIsCalled()
+        public void Test_GetDao_FactorySupplied_VerifySuppliedFactoryCreateIsCalled()
         {
             var factoryMock = new Mock<IDaoFactory>();
             var factory = factoryMock.Object;
 
             var sut = new DaoFactory(factory, null, NHibernateHelper);
 
-            sut.CreateDao<IIdentifiable>();
+            sut.GetDao<IIdentifiable>();
 
-            factoryMock.Verify(x => x.CreateDao<IIdentifiable>());
+            factoryMock.Verify(x => x.GetDao<IIdentifiable>());
+        }
+
+        [Test]
+        public void Test_GetDao_AllreadyUsed_SameFactoryIsReturned()
+        {
+            var factoryMock = new Mock<IDaoFactory>();
+            var factory = factoryMock.Object;
+
+            var sut = new DaoFactory(factory, null, NHibernateHelper);
+
+            var firstTime=sut.GetDao<IIdentifiable>();
+
+            Assert.That(sut.GetDao<IIdentifiable>(), Is.SameAs(firstTime));
         }
     }
 }

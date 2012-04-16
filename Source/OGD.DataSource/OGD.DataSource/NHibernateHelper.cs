@@ -9,11 +9,18 @@ namespace Ogd.DataSource
 {
     public class NHibernateHelper : INHibernateHelper
     {
+        public NHibernateHelper() { }
+
+        public NHibernateHelper(Configuration configuration)
+        {
+            _configuration = configuration;
+        }
+
         internal static volatile ISessionFactory _instance;
 
         private static object _syncRoot = new Object();
 
-        internal static bool _configured = false;
+        private static bool _configured = false;
 
         internal static Configuration _configuration;
 
@@ -106,12 +113,24 @@ namespace Ogd.DataSource
             if (SessionIsBound)
             {
                 CurrentSessionContext.Unbind(SessionFactory);
-                if (currentSession.IsOpen)
+
+                try
                 {
-                    Commit(currentSession.Transaction);
-                    currentSession.Flush();
+                    if (currentSession.IsOpen)
+                    {
+                        Commit(currentSession.Transaction);
+                        currentSession.Flush();
+                    }
                 }
-                currentSession.Close();
+                catch
+                {
+                    Rollback(currentSession.Transaction);
+                    throw;
+                }
+                finally
+                {
+                    currentSession.Close();
+                }
             }
         }
 

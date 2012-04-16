@@ -22,7 +22,7 @@ namespace Ogd.DataSource
             NHibernateHelper = nHibernateHelper;
         }
 
-        public IDao<T> CreateDao<T>()
+        public IDao<T> GetDao<T>()
             where T : class, IIdentifiable
         {
             return new GenericDao<T>((IQueryable<T>)InitialCollection, NHibernateHelper);
